@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>IE Image Upload</title>
+	    <link rel="stylesheet" href="css/manifest.css" />
+	</head>
+	<body>
+	    <input type="file" onchange="jsReadFiles(this.files)"/>
+	    <div class="icon"></div>
+	    <div class="icon-preview" id="preview">
+	    	<img id="img" />
+	    	<div id="crop"></div>
+	    </div>
+	</body>
+	<script>
+		const threshold = 1048576;//kb
+		var img = document.getElementById("img"),
+			container = document.getElementById("preview"),
+			crop = document.getElementById("crop");
+			var md = false;
+			crop.onmousedown = function() {
+				console.log('mousedown');
+				md = true;
+			}
+			crop.onmouseup = function() {
+				console.log('mouseup');
+				md = false;
+			}
+			crop.onmousemove = function(event) {
+				console.log(md)
+				if (!md) return;
+				var curTop = this.offsetTop + event.movementY;
+				var curLeft = this.offsetLeft + event.movementX;
+				if (curTop < 0 || curTop > container.offsetHeight - this.offsetHeight) return;
+				if (curLeft > container.offsetWidth - this.offsetWidth || curLeft < 0) return;
+				this.style.top = curTop + 'px';
+				this.style.left = curLeft + 'px';
+			}
+		function jsReadFiles(files) {
+			if (files.length === 0) return;
+			console.log(files);
+			var file = files[0];
+			if (file.size > threshold) return alert('上传图片不得大于1MB!');
+			var reader = new FileReader();
+			reader.onload = function() {
+				img.src = this.result;
+			}
+			reader.readAsDataURL(file);
+		}
+
+	</script>
+</html>
